@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import {
@@ -22,7 +22,11 @@ import { Text } from 'src/ui/text';
 
 import styles from './ArticleParamsForm.module.scss';
 
-export const ArticleParamsForm = () => {
+type ArticleParamsFormProps = {
+	onApply: (articleState: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const [formState, setFormState] =
@@ -39,6 +43,11 @@ export const ArticleParamsForm = () => {
 			...currentFormState,
 			[field]: option,
 		}));
+	};
+
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		onApply(formState);
 	};
 
 	useEffect(() => {
@@ -66,7 +75,7 @@ export const ArticleParamsForm = () => {
 				className={clsx(styles.container, {
 					[styles.container_open]: isOpen,
 				})}>
-				<form className={styles.form}>
+				<form className={styles.form} onSubmit={handleSubmit}>
 					<Text as='h2' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
