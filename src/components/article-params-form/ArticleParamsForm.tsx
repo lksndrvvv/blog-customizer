@@ -9,7 +9,7 @@ import {
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
-	OptionType,
+	type OptionType,
 } from 'src/constants/articleProps';
 
 import { ArrowButton } from 'src/ui/arrow-button';
@@ -32,17 +32,19 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
 
-	const formRef = useRef<HTMLDivElement>(null);
+	const asideRef = useRef<HTMLElement>(null);
 
 	const handleToggleForm = () => {
 		setIsOpen((currentIsOpen) => !currentIsOpen);
 	};
 
-	const handleChange = (option: OptionType, field: keyof ArticleStateType) => {
-		setFormState((currentFormState) => ({
-			...currentFormState,
-			[field]: option,
-		}));
+	const updateFormField = (field: keyof ArticleStateType) => {
+		return (value: OptionType) => {
+			setFormState((currentFormState) => ({
+				...currentFormState,
+				[field]: value,
+			}));
+		};
 	};
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -62,7 +64,15 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 		}
 
 		const handleOutsideClick = (event: MouseEvent) => {
-			if (formRef.current && !formRef.current.contains(event.target as Node)) {
+			if (!asideRef.current) {
+				return;
+			}
+
+			const isClickInsideAside = event
+				.composedPath()
+				.includes(asideRef.current);
+
+			if (!isClickInsideAside) {
 				setIsOpen(false);
 			}
 		};
@@ -75,9 +85,10 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	}, [isOpen]);
 
 	return (
-		<div ref={formRef}>
+		<>
 			<ArrowButton isOpen={isOpen} onClick={handleToggleForm} />
 			<aside
+				ref={asideRef}
 				className={clsx(styles.container, {
 					[styles.container_open]: isOpen,
 				})}>
@@ -93,7 +104,7 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 						title='Шрифт'
 						selected={formState.fontFamilyOption}
 						options={fontFamilyOptions}
-						onChange={(option) => handleChange(option, 'fontFamilyOption')}
+						onChange={updateFormField('fontFamilyOption')}
 					/>
 
 					<RadioGroup
@@ -101,29 +112,30 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 						name='font-size'
 						selected={formState.fontSizeOption}
 						options={fontSizeOptions}
-						onChange={(option) => handleChange(option, 'fontSizeOption')}
+						onChange={updateFormField('fontSizeOption')}
 					/>
 
 					<Select
 						title='Цвет шрифта'
 						selected={formState.fontColor}
 						options={fontColors}
-						onChange={(option) => handleChange(option, 'fontColor')}
+						onChange={updateFormField('fontColor')}
 					/>
+
 					<Separator />
 
 					<Select
 						title='Цвет фона'
 						selected={formState.backgroundColor}
 						options={backgroundColors}
-						onChange={(option) => handleChange(option, 'backgroundColor')}
+						onChange={updateFormField('backgroundColor')}
 					/>
 
 					<Select
 						title='Ширина контента'
 						selected={formState.contentWidth}
 						options={contentWidthArr}
-						onChange={(option) => handleChange(option, 'contentWidth')}
+						onChange={updateFormField('contentWidth')}
 					/>
 
 					<div className={styles.bottomContainer}>
@@ -132,6 +144,6 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 					</div>
 				</form>
 			</aside>
-		</div>
+		</>
 	);
 };
