@@ -2,7 +2,7 @@ import { type FormEvent, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import {
-	ArticleStateType,
+	type ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
 	defaultArticleState,
@@ -50,6 +50,12 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 		onApply(formState);
 	};
 
+	const handleReset = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setFormState(defaultArticleState);
+		onApply(defaultArticleState);
+	};
+
 	useEffect(() => {
 		if (!isOpen) {
 			return;
@@ -75,7 +81,10 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 				className={clsx(styles.container, {
 					[styles.container_open]: isOpen,
 				})}>
-				<form className={styles.form} onSubmit={handleSubmit}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
 					<Text as='h2' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>

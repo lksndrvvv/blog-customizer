@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import { Article } from '../article/Article';
 import { ArticleParamsForm } from '../article-params-form/ArticleParamsForm';
-// import { defaultArticleState } from './../../constants/articleProps';
+
 import {
 	type ArticleStateType,
 	defaultArticleState,
